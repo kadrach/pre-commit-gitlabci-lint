@@ -10,7 +10,7 @@ from urllib.request import Request, urlopen
 token_env_key = "GITLAB_TOKEN"
 
 parser = argparse.ArgumentParser()
-parser.add_argument("base_url", nargs="?", default="https://gitlab.com/")
+parser.add_argument("url", nargs="?", default="https://gitlab.com/api/v4/ci/lint")
 parser.add_argument(
     "--token",
     default=os.getenv(token_env_key),
@@ -25,7 +25,7 @@ parser.add_argument(
 
 def main(argv=None):
     args = parser.parse_args(argv)
-    base_url = args.base_url
+    url = args.url
     token = args.token
 
     rv = 0
@@ -36,7 +36,7 @@ def main(argv=None):
         print("Cannot open .gitlab-ci.yml")
         rv = 1
     else:
-        url = urljoin(base_url, "/api/v4/ci/lint")
+        # url = urljoin(base_url, "/api/v4/ci/lint")
         msg_using_linter = "Using linter: " + url
         headers = {
             "Content-Type": "application/json",
