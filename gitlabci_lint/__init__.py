@@ -1,9 +1,9 @@
+from typing import List
 import argparse
 import json
 import os
 
 import urllib.error
-from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 
 
@@ -21,6 +21,13 @@ parser.add_argument(
         )
     ),
 )
+
+
+def print_messages(messages: List[str]):
+    print("=======")
+    for msg in messages:
+        print(msg)
+    print("=======")
 
 
 def main(argv=None):
@@ -55,12 +62,26 @@ def main(argv=None):
             response = urlopen(request)
             lint_output = json.loads(response.read())
 
-            if not lint_output["status"] == "valid":
-                print("=======")
-                for error in lint_output["errors"]:
-                    print(error)
+            if "status" in lint_output:
+                # Gitlab version < 15.7
+                if not lint_output["status"] == "valid":
+                    print_messages(lint_output["errors"])
+                    rv = 1
+                elif lint_output["warnings"]:
+                    print_messages(lint_output["warnings"])
+            elif "valid" in lint_output:
+                # Gitlab version > 15.7
+                if not lint_output["valid"]:
+                    print_messages(lint_output["errors"])
+                    rv = 1
+                elif lint_output["warnings"]:
+                    print_messages(lint_output["warnings"])
+            else:
+                # Gitlab changed its output again?
+                print(
+                    "Unknown gitlab response. Did gitlab update the ci linter response again?"
+                )
                 rv = 1
-                print("=======")
         except urllib.error.URLError as exc:
             print("Error connecting to Gitlab: " + str(exc))
             if (

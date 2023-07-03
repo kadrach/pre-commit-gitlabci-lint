@@ -1,0 +1,9 @@
+[tool.commitizen]
+  annotated_tag = true
+  bump_message = "bump: release $current_version \u2192 $new_version [skip-ci]"
+  name = "cz_conventional_commits"
+  tag_format = "$version"
+  version = "0.0.0"
+  version_files = [
+    "setup.py:version",
+  ]

@@ -10,6 +10,9 @@ GitLab Lint API [requires authorization](https://gitlab.com/gitlab-org/gitlab/-/
 
 **Warning** Please note the token should not be shared and if leaked can cause significant harm.
 
+With Gitlab version 15.7 onwards, the ci linter api has changed and requires the project id (see [Validate a project's CI configuration](https://docs.gitlab.com/ee/api/lint.html#validate-a-projects-ci-configuration)).
+Please specify the full linter url in the args parameter containing the correct project id of the hook (replace ':id' with your project id in the example below).
+
 An example `.pre-commit-config.yaml`:
 
 ```yaml
@@ -19,5 +22,6 @@ repos:
     rev: 1.0
     hooks:
       - id: gitlabci-lint
-      # args: ["https://custom.gitlab.host.com/api/v4/projects/:id/ci/lint"]
-
+      # args: ["https://custom.gitlab.host.com/api/v4/projects/:id/ci/lint"] # for gitlab version > 15.7
+      # args: ["https://custom.gitlab.host.com/api/v4/ci/lint"] # for gitlab version < 15.7
+```
